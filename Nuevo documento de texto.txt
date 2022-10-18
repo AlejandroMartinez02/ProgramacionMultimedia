@@ -1,0 +1,43 @@
+@Preview
+    @Composable
+    fun prueba(){
+        var showloading by rememberSaveable{
+            mutableStateOf(false)
+        }
+        var processStatus by rememberSaveable{
+            mutableStateOf(0F)
+        }
+
+        Column(
+            Modifier
+                .padding(24.dp)
+                .fillMaxSize(), verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally){
+            if(showloading){
+                CircularProgressIndicator(color = Color.Red, strokeWidth = 3.dp, progress = processStatus)
+                LinearProgressIndicator(modifier = Modifier.padding(top = 32.dp),
+                color = Color.Green,
+                backgroundColor = Color.LightGray,
+                progress = processStatus)
+
+            }
+
+            Row(Modifier.fillMaxSize()){
+                Button(onClick = {
+                    if(processStatus > -1){
+                        processStatus -= 0.1F
+                    }
+                }){
+                    
+                }
+            }
+            Button(
+                modifier = Modifier.padding(top = 100.dp),
+                onClick = {
+                    showloading = !showloading
+                }
+            ){
+                Text("Activar/Desactivar")
+            }
+        }
+    }

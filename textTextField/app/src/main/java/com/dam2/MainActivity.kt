@@ -5,14 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
@@ -26,6 +23,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.ResourceFont
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -48,13 +46,14 @@ class MainActivity : ComponentActivity() {
                    Text3()
                    Text4()
                    Text5()
-                   Text6()
                    TextField1()
                    TextField2()
+                   TextField4()
                }
             }
         }
     }
+
 
     @Composable
     @Preview
@@ -132,18 +131,6 @@ class MainActivity : ComponentActivity() {
             }
             append("ro")
         })
-    }
-
-    @Composable
-    @Preview
-    fun Text6(){
-        Text(text = "Este es el último texto",
-            color = Color.Green,
-            fontFamily = anton,
-            textDecoration = TextDecoration.Underline,
-            fontSize = 15.sp,
-            letterSpacing = 10.sp
-        )
 
     }
 
@@ -174,6 +161,43 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    @Composable
+    @Preview
+    fun TextField3(){
+
+        OutlinedTextField(value = "Es igual al anterior pero Outlined",
+            onValueChange = { it },
+            label = {Text("Deshabilitado", fontFamily = silk)},
+            enabled = false,
+            textStyle = TextStyle(color = Color.Blue, fontFamily = silk)
+        )
+    }
+
+    @Composable
+    @Preview
+    fun TextField4(){
+        var text by remember{ mutableStateOf("") }
+        TextField(value = text,
+            onValueChange = { text = it },
+            label = {Text("Contraseñaaaaaaaa", fontFamily = silk)},
+            textStyle = TextStyle(color = Color.Blue, fontFamily = silk) ,
+            visualTransformation = PasswordVisualTransformation()
+        )
+    }
+
+
+
+    @Composable
+    @Preview
+    fun TextField5(){
+        var text by remember{ mutableStateOf("") }
+        TextField(value = text,
+            onValueChange = { text = it },
+            label = {Text("Ultimo TextField")},
+            textStyle = TextStyle(fontFamily = FontFamily.Cursive, color = Color.Yellow),
+            maxLines = 1
+        )
+    }
 }
 
 
