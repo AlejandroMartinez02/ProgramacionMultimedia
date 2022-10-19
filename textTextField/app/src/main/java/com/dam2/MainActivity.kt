@@ -48,7 +48,9 @@ class MainActivity : ComponentActivity() {
                    Text5()
                    TextField1()
                    TextField2()
+                   TextField3()
                    TextField4()
+                   TextField5()
                }
             }
         }
