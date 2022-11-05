@@ -28,61 +28,28 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            var usuario by rememberSaveable { mutableStateOf("") }
-            var password by rememberSaveable { mutableStateOf("") }
-            var registro by rememberSaveable { mutableStateOf(false) }
-            var inicioSesion by rememberSaveable { mutableStateOf(true) }
-            var home by rememberSaveable { mutableStateOf(false) }
-            var favoritas by rememberSaveable { mutableStateOf(false) }
+            var vista by rememberSaveable { mutableStateOf(0) }
             var nombrePeli by rememberSaveable { mutableStateOf("") }
-            var descPeli by rememberSaveable { mutableStateOf("") }
-            var cards by rememberSaveable { mutableStateOf(mutableListOf<Pair<String,String>>(Pair("Peli 1", "Desc 1"),
-                Pair("Peli 2", "Desc 2"),
-                Pair("Peli 3", "Desc 3"))) }
-            var pelisFavs by rememberSaveable{ mutableStateOf(mutableListOf<Pair<String,String>>(Pair("Peli fav 1", "Desc 1"))) }
+            var puntPeli by rememberSaveable { mutableStateOf(0) }
+            val cards by rememberSaveable { mutableStateOf(mutableListOf<Pair<String,Int>>(Pair("Peli 1", 6),
+                Pair("Peli 2", 8),
+                Pair("Peli 3", 3)))}
+            var pelisFavs by rememberSaveable{ mutableStateOf(mutableListOf<Pair<String,Int>>(Pair("Peli 1", 6))) }
 
-            if (inicioSesion) {
-                MyDialogSignIn(
-                    usuario = usuario,
-                    onUsuarioChange = {usuario = it},
-                    password = password,
-                    onPassWordChange = {password = it},
-                    signInChange = {
-                        inicioSesion = !inicioSesion
-                        home = !home
-                    },
-                    registro = {inicioSesion = !inicioSesion
-                        registro = !registro
-                    }
+            if (vista == 0) {
+                MyDialogSignIn(signInChange = {vista = it})
+            } else if(vista == 1){
+                MyHome(
+                    cards = cards ,
+                    onChangeFavouriteList = {pelisFavs.add(Pair(nombrePeli, puntPeli))},
+                    onChangeView = {vista = it}
                 )
-            } else
-            {
-                if(home){
-                    MyHome(
-                        cards = cards,
-                        onChangeFavouriteList = { pelisFavs.add(Pair(nombrePeli, descPeli))  },
-                        favoritas = favoritas,
-                        onFavoritasChange = {favoritas =!favoritas},
-                        home = home,
-                        onHomeChange = {home = !home}
-                    )
-
-                }else if(favoritas){
-                    MyFavourites(
-                        favourites = pelisFavs,
-                        onChangeFavouriteList = {},
-                        favoritas = favoritas,
-                        onChangeView = {
-
-                        }
-                        home = home,
-
-                    )
-
-
-                }
+            }else if(vista == 2){
+                MyFavourites(favourites = pelisFavs, onChangeFavouriteList = {}, onChangeView = {vista = it})
+            }else{
+                MyRegistro()
             }
+
 
         }
     }
@@ -90,23 +57,29 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyFavourites(favourites : MutableList<Pair<String,String>>, onChangeFavouriteList: () -> Unit, favoritas: Boolean, onViewChange: () -> Unit, home: Boolean) {
-    MyScaffold(content = favourites, onChangeFavouriteList, favoritas, home, onViewChange)
+fun MyFavourites(favourites : MutableList<Pair<String,Int>>, onChangeFavouriteList: () -> Unit, onChangeView: (Int) -> Unit) {
+    MyScaffold(content = favourites, onChangeFavouriteList, onChangeView)
 }
 
 
 @Composable
-fun MyHome(cards : MutableList<Pair<String,String>>, onChangeFavouriteList: () -> Unit, favoritas: Boolean, onFavoritasChange: () -> Unit, home: Boolean, onHomeChange : () -> Unit) {
+fun MyHome(cards : MutableList<Pair<String,Int>>, onChangeFavouriteList: () -> Unit, onChangeView: (Int) -> Unit) {
     MyScaffold(content = cards,
-    onChangeFavourite = onChangeFavouriteList, home, favoritas, onViewChange)
+    onChangeFavourite = onChangeFavouriteList, onChangeView)
 
 }
 
+@Composable
+fun MyRegistro(){
+
+}
 
 @Composable
-fun MyDialogSignIn(usuario : String, onUsuarioChange : (String) -> Unit, password : String, onPassWordChange : (String) -> Unit, signInChange : ()-> Unit, registro : () -> Unit)
+fun MyDialogSignIn(signInChange : (Int)-> Unit)
     {
-        Dialog(onDismissRequest ={signInChange()},
+        var usuario by rememberSaveable { mutableStateOf("") }
+        var password by rememberSaveable { mutableStateOf("") }
+        Dialog(onDismissRequest ={signInChange(0)},
             properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
         ) {
             Column(
@@ -116,19 +89,19 @@ fun MyDialogSignIn(usuario : String, onUsuarioChange : (String) -> Unit, passwor
                     .fillMaxWidth()
             ){
                 Spacer(Modifier.padding(top=20.dp))
-                MyDialogTextFields(texto = "",name = usuario,  onValueChange = onUsuarioChange,  placeholder = "Usuario/email")
+                MyDialogTextFields(texto = "",name = usuario,  onValueChange = {usuario = it},  placeholder = "Usuario/email")
                 Spacer(modifier = Modifier.padding(top = 10.dp))
-                MyDialogTextFields(texto = "",name = password, onValueChange = onPassWordChange, placeholder = "Contraseña")
+                MyDialogTextFields(texto = "",name = password, onValueChange = {password = it}, placeholder = "Contraseña")
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 Button(onClick = {
                     if (usuario.isNotEmpty() && password.isNotEmpty()){
-                        signInChange()
+                        signInChange(1)
                     }
                 },
                 Modifier.align(Alignment.CenterHorizontally)) {
                     Text("Iniciar sesión")
                 }
-                Button(onClick = {registro()},
+                Button(onClick = {signInChange(3)},
                 Modifier.background(Color.Transparent)) {
                     Text(text = "¿No estás registrado?")
                 }
@@ -139,12 +112,14 @@ fun MyDialogSignIn(usuario : String, onUsuarioChange : (String) -> Unit, passwor
 @Composable
 fun MyDialogTextFields(texto: String, name: String,  onValueChange: (String) -> Unit, placeholder : String){
     Column() {
-        TextField(value = name, onValueChange = onValueChange, placeholder = {placeholder} )
+        TextField(value = name,
+            onValueChange = onValueChange,
+            placeholder = {placeholder} )
     }
 }
 
 @Composable
-fun MyCard(name:String, location:String, onChangeFavourite : () -> Unit){
+fun MyCard(name:String, punt:String, onChangeFavourite : () -> Unit){
     Card(elevation = 10.dp,modifier = Modifier
         .fillMaxWidth()
         .height(70.dp))
@@ -152,7 +127,7 @@ fun MyCard(name:String, location:String, onChangeFavourite : () -> Unit){
         Row(Modifier.padding(start = 1.dp, top = 4.dp)) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = "nose",
+                contentDescription = "",
                 modifier = Modifier
                     .size(60.dp)
                     .clip(
@@ -168,12 +143,12 @@ fun MyCard(name:String, location:String, onChangeFavourite : () -> Unit){
                             .size(20.dp)
                             .padding(top = 1.dp)
                     )
-                    Text(text = location, fontSize = 12.sp, modifier = Modifier.padding(top = 3.dp))
+                    Text(text = punt, fontSize = 12.sp, modifier = Modifier.padding(top = 3.dp))
                 }
             }
             Row(horizontalArrangement = Arrangement.End) {
                 IconButton(
-                    onClick = {onChangeFavourite},
+                    onClick = {onChangeFavourite()},
                     modifier = Modifier.padding(start = 160.dp, top = 5.dp)
                 ) {
                     Icon(imageVector = Icons.Filled.Add, contentDescription = "add")
@@ -184,22 +159,22 @@ fun MyCard(name:String, location:String, onChangeFavourite : () -> Unit){
 }
 
 @Composable
-fun MyScaffold(content:  List<Pair<String, String>>, onChangeFavourite: () -> Unit, home : Boolean, favoritas : Boolean, onViewChange : () -> Unit){
+fun MyScaffold(content:  List<Pair<String, Int>>, onChangeFavourite: () -> Unit, onChangeView : (Int) -> Unit){
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         topBar = { MyTopAppBar()},
         scaffoldState = scaffoldState,
-        bottomBar = { MyBottomNavigation(home, favoritas, onViewChange)},
+        bottomBar = { MyBottomNavigation(onChangeView)},
         drawerContent = { MyDrawer()},
         content = { MyContent(content, onChangeFavourite)}
     )
 }
 
 @Composable
-fun MyContent( listPeople: List<Pair<String, String>>, OnChangeFavourite : () -> Unit){
+fun MyContent( listPeople: List<Pair<String, Int>>, OnChangeFavourite : () -> Unit){
     Column(Modifier.padding(start = 2.dp)) {
         listPeople.forEach{ item ->
-            MyCard(item.first, item.second, onChangeFavourite = OnChangeFavourite)
+            MyCard(item.first, item.second.toString(), onChangeFavourite = OnChangeFavourite)
             Spacer(modifier = Modifier.padding(bottom = 2.dp))
         }
 
@@ -225,7 +200,7 @@ fun MyDrawer() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(start = 100.dp, top=35.dp)
             ) {
-                Icon(painter = painterResource(id = R.drawable.ic_launcher_background), contentDescription = "nose", modifier = Modifier
+                Icon(painter = painterResource(id = R.drawable.ic_launcher_background), contentDescription = "", modifier = Modifier
                     //.padding(start = 130.dp, top = 5.dp)
                     .size(60.dp)
                     .clip(
@@ -284,24 +259,24 @@ fun MyTopAppBar(){
 }
 
 @Composable
-fun MyBottomNavigation(home : Boolean, favoritas : Boolean, onChangeView: () -> Unit){
+fun MyBottomNavigation(onChangeView: (Int) -> Unit){
     BottomNavigation(
         backgroundColor = Color(0xFFf2443d),
         contentColor = Color.White,
     ) {
-        BottomNavigationItem(selected = false, onClick = {}, icon = {
+        BottomNavigationItem(selected = false, onClick = {onChangeView(1)}, icon = {
             Icon(
                 imageVector = Icons.Default.Home,
                 contentDescription = "fav"
             )
         })
-        BottomNavigationItem(selected = false, onClick = {onChangeView}, icon = {
+        BottomNavigationItem(selected = false, onClick = {onChangeView(2)}, icon = {
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "Place"
             )
         })
-        BottomNavigationItem(selected = false, onClick = {  }, icon = {
+        BottomNavigationItem(selected = false, onClick = {onChangeView(3)}, icon = {
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "person"
