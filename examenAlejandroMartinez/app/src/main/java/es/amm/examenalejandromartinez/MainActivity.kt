@@ -1,10 +1,14 @@
 package es.amm.examenalejandromartinez
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -22,14 +26,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.constraintlayout.compose.Visibility
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("MutableCollectionMutableState")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -44,17 +49,21 @@ class MainActivity : ComponentActivity() {
             } else if(vista == 1){
                 MyHome(
                     cards = cards ,
-                    onChangeFavouriteList = {if(!pelisFavs.contains(it)){
+                    onChangeFavouriteList = {if(pelisFavs.contains(it)){
                         pelisFavs.add(Pair(it.first, it.second))
                         }},
                     onChangeView = {vista = it},
-                    listCompare = pelisFavs,
-                    addMovies = {cards.add(it)}
+                    addMovies = {if(!cards.contains(it)){
+                        cards.add(it)
+                    }},
+                    view = vista
                 )
             }else if(vista == 2){
                 MyFavourites(favourites = pelisFavs, onChangeFavouriteList = {
                      pelisFavs.remove(it)
-                }, onChangeView = {vista = it}, listCompare = pelisFavs, addMovies = {cards.add(it)})
+                }, onChangeView = {vista = it}, addMovies = {if(!cards.contains(it)){
+                        cards.add(it)
+                    }}, view = vista)
             }else{
                 MyRegistro(vistaOnChange = {vista = it})
             }
@@ -64,16 +73,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyFavourites(favourites : MutableList<Pair<String,Int>>, listCompare : List<Pair<String, Int>>, onChangeFavouriteList: (Pair<String,Int>) -> Unit, onChangeView: (Int) -> Unit, addMovies : (Pair<String, Int>) -> Unit) {
-    MyMainScaffold(content = favourites, listCompare = listCompare, onChangeFavouriteList, onChangeView, addMovies)
+fun MyFavourites(favourites : MutableList<Pair<String,Int>>, onChangeFavouriteList: (Pair<String,Int>) -> Unit,view : Int, onChangeView: (Int) -> Unit, addMovies : (Pair<String, Int>) -> Unit) {
+    MyMainScaffold(content = favourites, onChangeFavouriteList,view, onChangeView, addMovies)
 }
 
 
 @Composable
-fun MyHome(cards : MutableList<Pair<String,Int>>, listCompare : List<Pair<String, Int>>, onChangeFavouriteList: (Pair<String,Int>) -> Unit, onChangeView: (Int) -> Unit, addMovies : (Pair<String, Int>) -> Unit) {
+fun MyHome(cards : MutableList<Pair<String,Int>>, onChangeFavouriteList: (Pair<String,Int>) -> Unit,view : Int, onChangeView: (Int) -> Unit, addMovies : (Pair<String, Int>) -> Unit) {
     MyMainScaffold(content = cards,
-    onChangeFavourite = onChangeFavouriteList, listCompare = listCompare, onChangeView = onChangeView,
-        addMovies = addMovies
+    onChangeFavourite = onChangeFavouriteList, onChangeView = onChangeView,
+        addMovies = addMovies,
+        view = view
     )
 }
 
@@ -84,11 +94,11 @@ fun MyRegistro(vistaOnChange : (Int) -> Unit){
     var rPassword by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var deporte by rememberSaveable { mutableStateOf(false)}
-    var cine by rememberSaveable { mutableStateOf(false)}
-    var viaje by rememberSaveable { mutableStateOf(false)}
-    var museo by rememberSaveable { mutableStateOf(false)}
-    var juego by rememberSaveable { mutableStateOf(false)}
-    var anime by rememberSaveable { mutableStateOf(false)}
+    var accion by rememberSaveable { mutableStateOf(false)}
+    var sifi by rememberSaveable { mutableStateOf(false)}
+    var romance by rememberSaveable { mutableStateOf(false)}
+    var historicas by rememberSaveable { mutableStateOf(false)}
+    var documentales by rememberSaveable { mutableStateOf(false)}
     var error by rememberSaveable { mutableStateOf(false)}
     Column(
         Modifier
@@ -105,13 +115,13 @@ fun MyRegistro(vistaOnChange : (Int) -> Unit){
             onEmailChange = {email = it}
         )
         Intereses(
-            listaChecks = listOf(deporte,cine,viaje,museo,juego,anime),
+            listaChecks = listOf(deporte,accion,sifi,romance,historicas,documentales),
             onDeporteChange = {deporte = !deporte},
-            onCineChange = {cine = !cine},
-            onViajeChange = {viaje = !viaje},
-            onMuseoChange = {museo = !museo},
-            onJuegoChange = {juego = !juego},
-            onAnimeChange = {anime = !anime}
+            onAccionChange = {accion = !accion},
+            onSifiChange = {sifi = !sifi},
+            onRomanceChange = {romance = !romance},
+            onHistoriaChange = {historicas = !historicas},
+            onDocChange = {documentales = !documentales}
         )
         Button(onClick = {
               if(nombre.isNotBlank() && password == rPassword && email.contains("@")){
@@ -134,6 +144,7 @@ fun MyRegistro(vistaOnChange : (Int) -> Unit){
 fun MyDialogSignIn(signInChange : (Int)-> Unit) {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
+    val usuariosRegistrados by rememberSaveable{ mutableStateOf(mutableListOf<Pair<String,String>>(Pair("Admin", "1234")))}
     var usuario by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
@@ -176,12 +187,24 @@ fun MyDialogSignIn(signInChange : (Int)-> Unit) {
                 Spacer(modifier = Modifier.padding(top = 12.dp))
                 Button(onClick = {
                     if (usuario.isNotEmpty() && password.isNotEmpty()){
-                        signInChange(1)
+                        for(i in usuariosRegistrados){
+                            if(i.first == usuario && i.second == password){
+                                signInChange(1)
+                                break
+                            }else{
+                                scope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        "El usuario o contraseña es incorrecto",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
+                            }
+                        }
                     }
                     else{
                         scope.launch {
                             scaffoldState.snackbarHostState.showSnackbar(
-                                "El usuario o contraseña es incorrecto",
+                                "El usuario o contraseña son nulos.",
                                 duration = SnackbarDuration.Short
                             )
                         }
@@ -205,14 +228,19 @@ fun MyDialogSignIn(signInChange : (Int)-> Unit) {
     }
     }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MyCard(name:String, punt: Int, onChangeFavourite : (Pair<String,Int>) -> Unit, icono : ImageVector, scaffoldState : ScaffoldState){
     val scope = rememberCoroutineScope()
     val textoSnackBar = comprobarIcono(icono)
+    var expandedState by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Card(elevation = 10.dp,modifier = Modifier
         .fillMaxWidth()
-        .height(70.dp))
+        .height(70.dp),
+    onClick = {expandedState = !expandedState})
     {
         Row(Modifier.padding(start = 1.dp, top = 4.dp)){
             Icon(
@@ -250,11 +278,21 @@ fun MyCard(name:String, punt: Int, onChangeFavourite : (Pair<String,Int>) -> Uni
                               }},
                     modifier = Modifier.padding(top = 7.dp)
                 ) {
-                    Icon(imageVector = icono, contentDescription = "add")
+                    Icon(imageVector = icono, contentDescription = "")
                 }
             }
         }
+
     }
+    if(expandedState){
+        Text(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            , overflow = TextOverflow.Ellipsis, maxLines = 3, modifier = Modifier.padding(7.dp))
+        Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = "",
+            Modifier
+                .height(200.dp)
+                .fillMaxWidth())
+    }
+    
 }
 
 fun comprobarIcono(icono : ImageVector) : String{
@@ -265,27 +303,27 @@ fun comprobarIcono(icono : ImageVector) : String{
 }
 
 @Composable
-fun MyMainScaffold(content:  List<Pair<String, Int>>, listCompare : List<Pair<String, Int>>, onChangeFavourite: (Pair<String,Int>) -> Unit, onChangeView : (Int) -> Unit, addMovies : (Pair<String, Int>) -> Unit){
+fun MyMainScaffold(content:  List<Pair<String, Int>>, onChangeFavourite: (Pair<String,Int>) -> Unit, view : Int, onChangeView : (Int) -> Unit, addMovies : (Pair<String, Int>) -> Unit){
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         topBar = { MyTopAppBar(addMovies, scaffoldState)},
         scaffoldState = scaffoldState,
         bottomBar = { MyBottomNavigation(onChangeView)},
         drawerContent = {},
-        content = { MyContent(content, listCompare = listCompare, onChangeFavourite, scaffoldState)}
+        content = { MyContent(content, onChangeFavourite,view, scaffoldState)}
     )
 }
 
 @Composable
-fun MyContent( listPeople: List<Pair<String, Int>>, listCompare : List<Pair<String, Int>>, OnChangeFavourite : (Pair<String,Int>) -> Unit, scaffoldState : ScaffoldState){
-    val icono : ImageVector = if(listPeople == listCompare){
+fun MyContent( listPeople: List<Pair<String, Int>>, OnChangeFavourite : (Pair<String,Int>) -> Unit, view : Int,scaffoldState : ScaffoldState){
+    val icono : ImageVector = if(view == 2){
         Icons.Filled.Clear
     }else{
         Icons.Filled.Add
     }
-    Column(Modifier.padding(start = 2.dp)) {
-        listPeople.forEach { item ->
-            MyCard(item.first, item.second, onChangeFavourite = OnChangeFavourite, icono, scaffoldState)
+    LazyColumn(Modifier.padding(start = 2.dp, bottom = 60.dp)) {
+        items(listPeople) { card ->
+            MyCard(card.first, card.second, onChangeFavourite = OnChangeFavourite, icono, scaffoldState)
             Spacer(modifier = Modifier.padding(bottom = 2.dp))
         }
     }
@@ -339,10 +377,12 @@ fun MyTopAppBar(addMovies : (Pair<String, Int>) -> Unit,  scaffoldState : Scaffo
                     if (nombrePeli.isNotEmpty() && puntPeli.isNotEmpty()){
                         anyadirPeli = false
                         addMovies(Pair(nombrePeli,puntPeli.toInt()))
+                        nombrePeli = ""
+                        puntPeli = ""
                     }else{
                         scope.launch {
                             scaffoldState.snackbarHostState.showSnackbar(
-                                "Algún parámetro está en blanco, introduzca los datos correctamente",
+                                "Algún parámetro está en blanco o incorrecto, introduzca los datos correctamente",
                                 duration = SnackbarDuration.Short
                             )
                         }}
@@ -384,11 +424,11 @@ fun MyBottomNavigation(onChangeView: (Int) -> Unit){
 @Composable
 fun Intereses(listaChecks : List<Boolean>,
               onDeporteChange : (Boolean) -> Unit,
-              onCineChange : (Boolean) -> Unit,
-              onViajeChange : (Boolean) -> Unit,
-              onMuseoChange : (Boolean) -> Unit,
-              onJuegoChange : (Boolean) -> Unit,
-              onAnimeChange : (Boolean) -> Unit,
+              onAccionChange : (Boolean) -> Unit,
+              onSifiChange : (Boolean) -> Unit,
+              onRomanceChange : (Boolean) -> Unit,
+              onHistoriaChange : (Boolean) -> Unit,
+              onDocChange : (Boolean) -> Unit,
 ){
     Text(text = "Intereses",
         fontSize = 20.sp,
@@ -400,27 +440,27 @@ fun Intereses(listaChecks : List<Boolean>,
                 Text("Deportes", Modifier.padding(top=15.dp))
             }
             Row{
-                Checkbox(checked = listaChecks[1], onCheckedChange = onCineChange)
-                Text("Cine", Modifier.padding(top=15.dp))
+                Checkbox(checked = listaChecks[1], onCheckedChange = onAccionChange)
+                Text("Accion", Modifier.padding(top=15.dp))
             }
             Row{
-                Checkbox(checked = listaChecks[2], onCheckedChange = onViajeChange)
-                Text("Viajes", Modifier.padding(top=15.dp))
+                Checkbox(checked = listaChecks[2], onCheckedChange = onSifiChange)
+                Text("Si-Fi", Modifier.padding(top=15.dp))
             }
         }
         Spacer(Modifier.width(30.dp))
         Column{
             Row{
-                Checkbox(checked = listaChecks[3], onCheckedChange = onMuseoChange)
-                Text("Museos", Modifier.padding(top=15.dp))
+                Checkbox(checked = listaChecks[3], onCheckedChange = onRomanceChange)
+                Text("Romance", Modifier.padding(top=15.dp))
             }
             Row{
-                Checkbox(checked = listaChecks[4], onCheckedChange = onJuegoChange)
-                Text("Videojuegos", Modifier.padding(top=15.dp))
+                Checkbox(checked = listaChecks[4], onCheckedChange = onHistoriaChange)
+                Text("Historicas", Modifier.padding(top=15.dp))
             }
             Row{
-                Checkbox(checked = listaChecks[5], onCheckedChange = onAnimeChange)
-                Text("Anime", Modifier.padding(top=15.dp))
+                Checkbox(checked = listaChecks[5], onCheckedChange =  onDocChange)
+                Text("Documentales", Modifier.padding(top=15.dp))
             }
         }
     }
