@@ -233,9 +233,7 @@ fun MyDialogSignIn(signInChange : (Int)-> Unit) {
 fun MyCard(name:String, punt: Int, onChangeFavourite : (Pair<String,Int>) -> Unit, icono : ImageVector, scaffoldState : ScaffoldState){
     val scope = rememberCoroutineScope()
     val textoSnackBar = comprobarIcono(icono)
-    var expandedState by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var expandedState by rememberSaveable { mutableStateOf(false) }
 
     Card(elevation = 10.dp,modifier = Modifier
         .fillMaxWidth()
