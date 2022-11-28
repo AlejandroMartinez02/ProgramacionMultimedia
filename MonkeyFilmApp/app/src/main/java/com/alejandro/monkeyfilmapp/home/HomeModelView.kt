@@ -9,6 +9,8 @@ class HomeModelView {
     val peliculas = _peliculas
     init {
         _peliculas.value = mutableListOf(
+
+            //hACER UN FOREACH PARA AÑADIR CADA OBJECTO MEDIAMODEL A LA LISTA
             MediaModel(
                 id = 1,
                 title = "Peaky Blinders",
