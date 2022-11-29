@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.alejandro.monkeyfilmapp.R
-import com.alejandro.monkeyfilmapp.login.ui.LoginViewModel
 import com.alejandro.monkeyfilmapp.ui.theme.*
 
 
@@ -38,7 +37,7 @@ fun RegisterScreen(modelView: RegisterModelView, navController: NavHostControlle
     Column(
         Modifier
             .fillMaxSize()
-            .background(azul)
+            .background(azulFondo)
             .padding(10.dp)) {
         Image(
             painter = painterResource(id = R.drawable.mono_registro),

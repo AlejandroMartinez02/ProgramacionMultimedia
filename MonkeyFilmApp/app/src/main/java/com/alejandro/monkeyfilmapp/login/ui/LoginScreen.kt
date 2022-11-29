@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -31,7 +30,6 @@ import com.alejandro.monkeyfilmapp.ui.screens.Routes
 import com.alejandro.monkeyfilmapp.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, navController : NavHostController) {
@@ -42,11 +40,11 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController : NavHostControlle
     val isLoading : Boolean by loginViewModel.isLoading.observeAsState(initial = false)
     Box(modifier = Modifier
         .fillMaxSize()
-        .background(azul)){
+        .background(azulFondo)){
         if(isLoading){
             Box(modifier = Modifier
                 .fillMaxSize()){
-                CircularProgressIndicator(Modifier.align(Alignment.Center))
+                CircularProgressIndicator(Modifier.align(Alignment.Center), color = Color.White)
             }
         }else{
             Column(modifier = Modifier
@@ -96,8 +94,8 @@ fun LoginButton(buttonEnabled : Boolean, onLoginSelected : () -> Unit) {
         .height(48.dp)
         .border(2.dp, Color.White),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(0xF4444FAF),
-            disabledBackgroundColor = Color(0xFF8888DF),
+            backgroundColor = Color(0xFF202B5D),
+            disabledBackgroundColor = Color(0xFF5F5F9C),
             contentColor = Color.White
         ),
         enabled = buttonEnabled) {

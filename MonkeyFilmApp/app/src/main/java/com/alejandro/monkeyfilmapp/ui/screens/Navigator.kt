@@ -13,15 +13,16 @@ import com.alejandro.monkeyfilmapp.register.*
 fun MonkeyNavigator(){
     val navigationController = rememberNavController()
     val login = LoginViewModel()
+    val main = HomeModelView()
     NavHost(navController = navigationController, startDestination = Routes.Login.route) {
         composable(route = Routes.Login.route) {
             LoginScreen(login,navigationController)
         }
         composable(route = Routes.Home.route) {
-            HomeScreen(HomeModelView(),navigationController = navigationController)
+            HomeScreen(main,navigationController = navigationController)
         }
         composable(route = Routes.Favourites.route){
-            Favourites(FavouritesModelView(), navigationController)
+            Favourites(main, navigationController)
         }
         composable(route = Routes.Register.route){
             RegisterScreen(RegisterModelView(), navigationController)
