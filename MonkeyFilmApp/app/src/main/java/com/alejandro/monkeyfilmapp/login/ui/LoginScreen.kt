@@ -8,6 +8,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -125,7 +126,10 @@ fun DialogRememberPassword(loginViewModel: LoginViewModel, navigationController:
 
     Dialog(onDismissRequest = {navigationController.navigate(Routes.Login.route)}) {
         if(showResponse){
-            Box(Modifier.fillMaxSize().background(Color.White)){
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.White)){
                 Text(
                     "¡Correo enviado, comprueba tu correo!",
                     fontFamily = Calibri,
@@ -135,7 +139,7 @@ fun DialogRememberPassword(loginViewModel: LoginViewModel, navigationController:
             }
             loginViewModel.viewModelScope.launch {
                 delay(4000)
-                navigationController.navigate(Routes.Login.route)
+                navigationController.popBackStack()
             }
 
         }else{
@@ -184,7 +188,7 @@ fun PasswordField(password : String, onPassChange : (String) -> Unit) {
                 R.drawable.show_password
             else R.drawable.hide_password
             IconButton(onClick = {passwordVisible = !passwordVisible}){
-                Icon(painter = painterResource(id = image), "",
+                Icon(painter = painterResource(id = R.drawable.ic_outline_visibility_24), "",
                     Modifier
                         .height(20.dp)
                         .width(20.dp))

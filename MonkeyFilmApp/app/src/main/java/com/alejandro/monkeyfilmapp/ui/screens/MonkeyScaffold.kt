@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.alejandro.monkeyfilmapp.MediaModel
+import com.alejandro.monkeyfilmapp.MovieModel
 import com.alejandro.monkeyfilmapp.home.HomeModelView
 import com.alejandro.monkeyfilmapp.ui.theme.azulFondo
 
@@ -45,18 +46,34 @@ fun MonkeyTopBar(){
 }
 
 @Composable
-fun MonkeyBottomBar(){
+fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostController) {
+    val selected by modelView.showFavourites.observeAsState(false)
     BottomNavigation(
         backgroundColor = azulFondo,
         contentColor = Color.White,
     ) {
-        BottomNavigationItem(selected = false, onClick = {}, icon = {
+        BottomNavigationItem(selected = !selected!!, onClick = {
+            if(selected){
+                modelView.changeFavourites(false)
+                navigationController.popBackStack()
+            }
+
+        }, icon = {
+
             Icon(
                 imageVector = Icons.Default.Home,
                 contentDescription = "Home"
             )
         })
-        BottomNavigationItem(selected = false, onClick = {}, icon = {
+        BottomNavigationItem(selected = selected!!, onClick = {
+            if(!selected){
+                modelView.changeFavourites(true)
+                navigationController.navigate(Routes.Home.route)
+            }
+
+        }
+            , icon = {
+
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "Favourites"
@@ -66,12 +83,26 @@ fun MonkeyBottomBar(){
 }
 
 @Composable
-fun MovieCards(peliculas: State<MutableList<MediaModel>?>) {
+fun MovieCards(viewModel: HomeModelView) {
+    val peliculas = viewModel.peliculas.observeAsState()
     LazyColumn(modifier = Modifier.background(Color(0xFF5454B8))) {
         item {
-            peliculas.value?.forEach { pelicula ->
-                MyCard(pelicula)
-                Spacer(modifier = Modifier.padding(bottom = 2.dp).background(Color(0xFF5454B8)))
+            if(viewModel.showFavourites.value == true){
+                peliculas.value?.forEach { pelicula ->
+                    if(pelicula.favorite){
+                        MyCard(pelicula)
+                        Spacer(modifier = Modifier
+                            .padding(bottom = 2.dp)
+                            .background(Color(0xFF5454B8)))
+                    }
+                }
+            }else{
+                peliculas.value?.forEach{pelicula ->
+                    MyCard(pelicula)
+                    Spacer(modifier = Modifier
+                        .padding(bottom = 2.dp)
+                        .background(Color(0xFF5454B8)))
+                }
             }
         }
     }
@@ -79,7 +110,7 @@ fun MovieCards(peliculas: State<MutableList<MediaModel>?>) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MyCard(pelicula: MediaModel) {
+fun MyCard(pelicula: MovieModel) {
     var expandedState by rememberSaveable { mutableStateOf(false) }
 
     Card(elevation = 10.dp,modifier = Modifier
@@ -102,7 +133,7 @@ fun MyCard(pelicula: MediaModel) {
                     Text(pelicula.title)
                     Row{
                         Icon(
-                            imageVector = Icons.Filled.Star, contentDescription = "Puntuacion",
+                            imageVector = Icons.Default.Star, contentDescription = "Puntuacion",
                             Modifier
                                 .size(20.dp)
                                 .padding(top = 1.dp),
@@ -112,10 +143,10 @@ fun MyCard(pelicula: MediaModel) {
                     }
                 }
                 IconButton(
-                    onClick = {},
+                    onClick = {pelicula.favorite = !pelicula.favorite},
                     modifier = Modifier.padding(top = 7.dp)
                 ) {
-                    Image(imageVector = Icons.Filled.Star, contentDescription = "")
+                    Image(imageVector = Icons.Default.Star, contentDescription = "")
                 }
             }
         }
@@ -141,16 +172,16 @@ fun MyCard(pelicula: MediaModel) {
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MonkeyMainScaffold(
-    peliculas: State<MutableList<MediaModel>?>,
     modelView: HomeModelView,
     navigationController: NavHostController
 ) {
+
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         topBar = { MonkeyTopBar() },
         scaffoldState = scaffoldState,
-        bottomBar = { MonkeyBottomBar() },
-        content = { MovieCards(peliculas)}
+        bottomBar = { MonkeyBottomBar(modelView,navigationController) },
+        content = { MovieCards(modelView)}
     )
 }
 

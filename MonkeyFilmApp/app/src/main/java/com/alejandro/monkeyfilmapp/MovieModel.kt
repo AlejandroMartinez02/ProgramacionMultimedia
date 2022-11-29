@@ -3,7 +3,7 @@ package com.alejandro.monkeyfilmapp
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName
 
-data class MediaModel(
+data class MovieModel(
     @SerializedName("id")
     var id: Int,
 

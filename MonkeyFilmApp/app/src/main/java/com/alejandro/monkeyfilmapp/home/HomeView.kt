@@ -7,8 +7,7 @@ import com.alejandro.monkeyfilmapp.ui.screens.MonkeyMainScaffold
 
 @Composable
 fun HomeScreen(homeModelView: HomeModelView, navigationController: NavHostController) {
-    val peliculas = homeModelView.peliculas.observeAsState()
-    MonkeyMainScaffold(peliculas, homeModelView, navigationController)
+    MonkeyMainScaffold(homeModelView, navigationController)
 }
 
 

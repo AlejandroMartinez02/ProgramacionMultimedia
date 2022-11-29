@@ -1,7 +1,5 @@
 package com.alejandro.monkeyfilmapp.home
 
-import com.alejandro.monkeyfilmapp.MediaModel
-import com.google.gson.JsonObject
 import retrofit2.Response
 import retrofit2.http.GET
 

@@ -12,6 +12,7 @@ import com.alejandro.monkeyfilmapp.register.*
 @Composable
 fun MonkeyNavigator(){
     val navigationController = rememberNavController()
+    val register = RegisterModelView()
     val login = LoginViewModel()
     val main = HomeModelView()
     NavHost(navController = navigationController, startDestination = Routes.Login.route) {
@@ -25,7 +26,7 @@ fun MonkeyNavigator(){
             Favourites(main, navigationController)
         }
         composable(route = Routes.Register.route){
-            RegisterScreen(RegisterModelView(), navigationController)
+            RegisterScreen(register, navigationController)
         }
         composable(route = Routes.ForwardPassword.route){
             DialogRememberPassword(login, navigationController)
