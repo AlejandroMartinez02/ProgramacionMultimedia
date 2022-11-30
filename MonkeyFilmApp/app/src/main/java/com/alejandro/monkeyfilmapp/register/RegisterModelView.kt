@@ -6,25 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.alejandro.monkeyfilmapp.login.ui.LoginViewModel
 import com.alejandro.monkeyfilmapp.ui.screens.Routes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class RegisterModelView : ViewModel(){
+class RegisterModelView : LoginViewModel(){
     private val _user = MutableLiveData<String>()
     val user = _user
-
-    private val _isButtonRegisterEnable = MutableLiveData<Boolean>()
-    val isButtonRegisterEnable : LiveData<Boolean> = _isButtonRegisterEnable
-
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading = _isLoading
-
-    private val _email = MutableLiveData<String>()
-    val email = _email
-
-    private val _password = MutableLiveData<String>()
-    val password = _password
 
     private val _confirmPassword = MutableLiveData<String>()
     val confirmPassword = _confirmPassword
@@ -67,9 +56,6 @@ class RegisterModelView : ViewModel(){
         _sifi.value = sifi
     }
 
-
-
-    private fun validEmail(email : String) : Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     private fun validPassword(password : String) : Boolean = password.length > 6
     private fun validUser(user:String) : Boolean = user.length > 6
     private fun validateSecondPassword(password : String, confirmPassword : String) : Boolean = (password == confirmPassword)
@@ -79,14 +65,14 @@ class RegisterModelView : ViewModel(){
         _user.value = user
         _password.value = password
         _confirmPassword.value = confirmPassword
-        _isButtonRegisterEnable.value =  validEmail(email) && validPassword(password) && validUser(user) && validateSecondPassword(password, confirmPassword)
+        _isButtonLoginEnable.value =  validEmail(email) && validPassword(password) && validUser(user) && validateSecondPassword(password, confirmPassword)
     }
 
     fun registerButtonPress(navController : NavHostController){
         viewModelScope.launch {
-            isLoading.value = true
+            _isLoading.value = true
             delay(4000)
-            isLoading.value = false
+            _isLoading.value = false
             navController.navigate(Routes.Home.route)
         }
     }

@@ -12,22 +12,22 @@ import com.alejandro.monkeyfilmapp.ui.screens.Routes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+open class LoginViewModel : ViewModel() {
     private val loginUseCase = LoginUseCase()
 
-    private val _email = MutableLiveData<String>()
+    protected val _email = MutableLiveData<String>()
 
     val email  = _email
 
-    private val _password = MutableLiveData<String>()
+    protected val _password = MutableLiveData<String>()
 
     val password : LiveData<String> = _password
 
-    private val _isButtonLoginEnable = MutableLiveData<Boolean>()
+    protected val _isButtonLoginEnable = MutableLiveData<Boolean>()
 
     val isButtonLoginEnable : LiveData<Boolean> = _isButtonLoginEnable
 
-    private val _isLoading = MutableLiveData<Boolean>()
+    protected val _isLoading = MutableLiveData<Boolean>()
 
     val isLoading : LiveData<Boolean> = _isLoading
 
@@ -40,9 +40,18 @@ class LoginViewModel : ViewModel() {
         _isButtonLoginEnable.value = validEmail(email) && validPassword(password)
     }
 
+    private val _showDialog = MutableLiveData<Boolean>()
+    val showDialog = _showDialog
+
     fun passwordForgotten(email : String){
         _forgottenEmail.value = email
+
     }
+
+    fun hideDialog(){
+        _showDialog.value = false
+    }
+
 
     fun validEmail(email : String) : Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
@@ -52,7 +61,7 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             delay(4000)
-            val result = loginUseCase(email.value!!, password.value!!)
+            val result = loginUseCase()
             if(result){
                 Log.i("DAM", "Se ha completado el login")
                 navController.navigate(Routes.Home.route)

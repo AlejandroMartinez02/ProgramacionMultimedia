@@ -1,5 +1,6 @@
-package com.alejandro.monkeyfilmapp.home
+package com.alejandro.monkeyfilmapp.home.data.network
 
+import com.alejandro.monkeyfilmapp.home.data.network.response.MoviesResponse
 import retrofit2.Response
 import retrofit2.http.GET
 

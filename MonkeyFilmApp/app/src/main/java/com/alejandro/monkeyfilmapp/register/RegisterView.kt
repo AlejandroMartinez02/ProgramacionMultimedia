@@ -32,7 +32,7 @@ fun RegisterScreen(modelView: RegisterModelView, navController: NavHostControlle
     val password by modelView.password.observeAsState("")
     val confirmPassword by modelView.confirmPassword.observeAsState("")
     val isLoading by modelView.isLoading.observeAsState(false)
-    val enabledButton by modelView.isButtonRegisterEnable.observeAsState(false)
+    val enabledButton by modelView.isButtonLoginEnable.observeAsState(false)
 
     Column(
         Modifier
@@ -190,8 +190,8 @@ fun PasswordFields(modifier: Modifier, password : String, confirmPassword : Stri
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
             val image = if (passwordVisible)
-                R.drawable.show_password
-            else R.drawable.hide_password
+                R.drawable.password_visible
+            else R.drawable.password_off
             IconButton(onClick = {passwordVisible = !passwordVisible}){
                 Icon(painter = painterResource(id = image), "",
                     Modifier
@@ -212,8 +212,8 @@ fun PasswordFields(modifier: Modifier, password : String, confirmPassword : Stri
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
             val image = if (passwordVisible)
-                com.alejandro.monkeyfilmapp.R.drawable.show_password
-            else com.alejandro.monkeyfilmapp.R.drawable.hide_password
+                R.drawable.password_visible
+            else R.drawable.password_off
             IconButton(onClick = {passwordVisible = !passwordVisible}){
                 Icon(painter = painterResource(id = image), "",
                     Modifier

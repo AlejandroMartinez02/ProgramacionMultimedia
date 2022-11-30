@@ -1,7 +1,8 @@
-package com.alejandro.monkeyfilmapp.home
+package com.alejandro.monkeyfilmapp.home.data
 
 import com.alejandro.monkeyfilmapp.MovieModel
 import com.alejandro.monkeyfilmapp.core.network.MoviesRetrofit
+import com.alejandro.monkeyfilmapp.home.data.network.MoviesService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ class MoviesApi {
          CoroutineScope(Dispatchers.IO).launch {
              val response = service.getMovies()
 
-             withContext(Dispatchers.Main){
+             withContext(Dispatchers.Unconfined){
                  if(response.isSuccessful){
                     val items = response.body()
 

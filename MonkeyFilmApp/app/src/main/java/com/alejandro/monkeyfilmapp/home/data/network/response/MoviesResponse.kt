@@ -1,4 +1,4 @@
-package com.alejandro.monkeyfilmapp.home
+package com.alejandro.monkeyfilmapp.home.data.network.response
 
 import com.alejandro.monkeyfilmapp.MovieModel
 import com.google.gson.annotations.SerializedName

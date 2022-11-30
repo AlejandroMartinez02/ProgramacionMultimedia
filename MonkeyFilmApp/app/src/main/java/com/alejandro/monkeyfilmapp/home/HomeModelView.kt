@@ -3,6 +3,7 @@ package com.alejandro.monkeyfilmapp.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.alejandro.monkeyfilmapp.MovieModel
+import com.alejandro.monkeyfilmapp.home.data.MoviesApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

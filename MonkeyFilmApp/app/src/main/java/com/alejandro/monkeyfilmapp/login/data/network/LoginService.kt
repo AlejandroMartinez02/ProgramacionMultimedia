@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 class LoginService {
     private val retrofit = RetrofitHelper.getRetrofitHelper()
 
-    suspend fun doLogin(user: String, password : String) : Boolean{
+    suspend fun doLogin() : Boolean{
         return withContext(Dispatchers.IO){
             val response = retrofit.create(LoginClient::class.java).doLogin()
             response.body()?.okLogin ?:false

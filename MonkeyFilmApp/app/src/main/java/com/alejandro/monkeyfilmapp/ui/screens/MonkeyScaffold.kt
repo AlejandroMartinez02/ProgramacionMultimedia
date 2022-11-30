@@ -14,19 +14,26 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.alejandro.monkeyfilmapp.MovieModel
+import com.alejandro.monkeyfilmapp.R
 import com.alejandro.monkeyfilmapp.home.HomeModelView
+import com.alejandro.monkeyfilmapp.ui.theme.Calibri
+import com.alejandro.monkeyfilmapp.ui.theme.azulCards
+import com.alejandro.monkeyfilmapp.ui.theme.azulClarito
 import com.alejandro.monkeyfilmapp.ui.theme.azulFondo
 
 @Composable
 fun MonkeyTopBar(){
     TopAppBar(
         title = {
-            Text(text = "Pelis")
+            Text(text = " Peliculas")
         },
         backgroundColor = azulFondo,
         contentColor = Color.White,
@@ -34,12 +41,6 @@ fun MonkeyTopBar(){
         navigationIcon = {
             IconButton(onClick = { }) {
                 Icon(imageVector = Icons.Filled.List, contentDescription = "back")
-            }
-        },
-        actions = {
-
-            IconButton(onClick = {}) {
-                Icon(imageVector = Icons.Filled.Refresh, contentDescription = "search")
             }
         }
     )
@@ -51,11 +52,14 @@ fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostContr
     BottomNavigation(
         backgroundColor = azulFondo,
         contentColor = Color.White,
+        modifier = Modifier.padding(top = 60.dp)
     ) {
         BottomNavigationItem(selected = !selected!!, onClick = {
             if(selected){
                 modelView.changeFavourites(false)
                 navigationController.popBackStack()
+            }else{
+               refreshView(navigationController)
             }
 
         }, icon = {
@@ -69,11 +73,12 @@ fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostContr
             if(!selected){
                 modelView.changeFavourites(true)
                 navigationController.navigate(Routes.Home.route)
+            }else{
+                refreshView(navigationController)
             }
 
         }
             , icon = {
-
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "Favourites"
@@ -83,25 +88,20 @@ fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostContr
 }
 
 @Composable
-fun MovieCards(viewModel: HomeModelView) {
+fun MovieCards(viewModel: HomeModelView, navigationController: NavHostController) {
     val peliculas = viewModel.peliculas.observeAsState()
-    LazyColumn(modifier = Modifier.background(Color(0xFF5454B8))) {
+
+    LazyColumn(modifier = Modifier.padding(bottom = 60.dp).background(azulClarito).fillMaxSize()) {
         item {
             if(viewModel.showFavourites.value == true){
                 peliculas.value?.forEach { pelicula ->
                     if(pelicula.favorite){
-                        MyCard(pelicula)
-                        Spacer(modifier = Modifier
-                            .padding(bottom = 2.dp)
-                            .background(Color(0xFF5454B8)))
+                        MyCard(pelicula, navigationController)
                     }
                 }
             }else{
                 peliculas.value?.forEach{pelicula ->
-                    MyCard(pelicula)
-                    Spacer(modifier = Modifier
-                        .padding(bottom = 2.dp)
-                        .background(Color(0xFF5454B8)))
+                    MyCard(pelicula, navigationController)
                 }
             }
         }
@@ -110,27 +110,28 @@ fun MovieCards(viewModel: HomeModelView) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MyCard(pelicula: MovieModel) {
+fun MyCard(pelicula: MovieModel, navigationController: NavHostController) {
     var expandedState by rememberSaveable { mutableStateOf(false) }
 
-    Card(elevation = 10.dp,modifier = Modifier
+    Card(modifier = Modifier
         .fillMaxWidth()
-        .height(70.dp),
+        .height(70.dp)
+        .background(azulCards),
         onClick = {expandedState = !expandedState})
     {
-        Row(Modifier.padding(start = 1.dp, top = 4.dp)){
-            /* Image(
-                 painter = painterResource(id = pelicula.cartel),
+        Row(Modifier.background(azulCards)){
+            Image(
+                 painter = painterResource(obtenerFoto(pelicula.cartel)),
                  contentDescription = "",
                  modifier = Modifier
-                     .size(60.dp)
-             )*/
+                     .size(60.dp),
+             )
             Row(verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ){
-                Column(Modifier.padding(start = 20.dp, top = 7.dp)) {
-                    Text(pelicula.title)
+                Column(Modifier.padding(start = 10.dp, top = 7.dp)) {
+                    Text(pelicula.title, color = Color.White, fontFamily = Calibri)
                     Row{
                         Icon(
                             imageVector = Icons.Default.Star, contentDescription = "Puntuacion",
@@ -139,33 +140,70 @@ fun MyCard(pelicula: MovieModel) {
                                 .padding(top = 1.dp),
                             tint = Color.Yellow
                         )
-                        Text(text = pelicula.score.toString(), fontSize = 12.sp, modifier = Modifier.padding(top = 3.dp))
+                        Text(text = pelicula.score.toString(), fontSize = 12.sp, fontFamily = Calibri, color = Color.White,modifier = Modifier.padding(top = 3.dp))
                     }
                 }
                 IconButton(
-                    onClick = {pelicula.favorite = !pelicula.favorite},
+                    onClick =
+                    {
+                        pelicula.favorite = !pelicula.favorite
+                        refreshView(navigationController)
+                    },
                     modifier = Modifier.padding(top = 7.dp)
                 ) {
-                    Image(imageVector = Icons.Default.Star, contentDescription = "")
+                    val image = if(pelicula.favorite){
+                        R.drawable.favourite
+                    }else
+                        R.drawable.no_favourite
+                    Image(painter = painterResource(id = image), contentDescription = "Fav")
                 }
             }
         }
 
     }
     if(expandedState){
-        Text(
-            text = pelicula.description,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 3,
-            modifier = Modifier.padding(7.dp)
-        )
-        /*Image(
-            painterResource(pelicula.cartel), contentDescription = "",
-            Modifier
-                .height(200.dp)
-                .fillMaxWidth())*/
-    }
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .background(azulClarito)){
+            Row() {
+                Image(
+                    painterResource(obtenerFoto(pelicula.cartel)), contentDescription = "Cartel",
+                    Modifier
+                        .height(200.dp)
+                        .padding(10.dp))
+               Column(verticalArrangement = Arrangement.Bottom, ) {
+                   Text(
+                       text = pelicula.description,
+                       overflow = TextOverflow.Ellipsis,
+                       maxLines = 3,
+                       modifier = Modifier.padding(7.dp).align(Alignment.CenterHorizontally),
+                       fontFamily = Calibri,
+                       fontSize = 15.sp,
+                       color = Color.White
+                   )
+                   Row(horizontalArrangement = Arrangement.SpaceAround,  modifier = Modifier.fillMaxWidth()){
+                       IconButton(onClick = {
+                           navigationController.navigate(Routes.ExpandMovie.createRoute(pelicula.id) )
+                       }) {
+                           Icon(painter = painterResource(id = R.drawable.expand_movie), contentDescription = "Expand movie")
+                       }
 
+                       IconButton(onClick = {/*FUTURA FUNCION*/}) {
+                            Icon(painter = painterResource(id = R.drawable.modify_movie), contentDescription = "Modify Movie")
+                       }
+                   }
+               }
+
+            }
+        }
+        }
+
+}
+
+fun refreshView(navigationController: NavHostController) {
+    val idView = navigationController.currentDestination?.id
+    navigationController.popBackStack(idView!!, inclusive = true)
+    navigationController.navigate(idView)
 }
 
 
@@ -181,7 +219,32 @@ fun MonkeyMainScaffold(
         topBar = { MonkeyTopBar() },
         scaffoldState = scaffoldState,
         bottomBar = { MonkeyBottomBar(modelView,navigationController) },
-        content = { MovieCards(modelView)}
+        content = { MovieCards(modelView, navigationController)}
     )
 }
 
+fun obtenerFoto(id : Int) : Int{
+    var imagen = R.drawable.ic_baseline_error_outline_24
+    when(id){
+        1 -> imagen = R.drawable.c1
+        2 -> imagen = R.drawable.c2
+        3-> imagen = R.drawable.c3
+        4-> imagen = R.drawable.c4
+        5-> imagen = R.drawable.c5
+        6-> imagen = R.drawable.c6
+        7-> imagen = R.drawable.c7
+        8-> imagen = R.drawable.c8
+        9-> imagen = R.drawable.c9
+        10-> imagen = R.drawable.c10
+    }
+    return imagen
+}
+
+/*
+ORDENAR POR PARAMETRO
+fun ordenar(lista : ArrayList<MovieModel>){
+    val newArray = lista
+    newArray.sortBy { it.score}
+    Log.d("", newArray.toString())
+}
+*/

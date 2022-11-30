@@ -8,7 +8,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.alejandro.monkeyfilmapp.R
@@ -64,7 +64,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController : NavHostControlle
                 Spacer(modifier = Modifier.padding(16.dp))
                 Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()){
                     CreateAccount(navController)
-                    RememberPassword(navController)
+                    RememberPassword(loginViewModel)
                 }
 
             }
@@ -105,26 +105,31 @@ fun LoginButton(buttonEnabled : Boolean, onLoginSelected : () -> Unit) {
 }
 
 @Composable
-fun RememberPassword(navController: NavHostController) {
+fun RememberPassword(loginViewModel: LoginViewModel) {
+    val showDialog by loginViewModel.showDialog.observeAsState(false)
     Text(
         text = "¿Olvidate la contraseña?",
         modifier = Modifier
-            .clickable { navController.navigate(Routes.ForwardPassword.route) }
+            .clickable { loginViewModel.showDialog.value = true }
             .padding(end = 10.dp),
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         textDecoration = TextDecoration.Underline,
         color = Color.White
     )
+    if(showDialog){
+        DialogRememberPassword(loginViewModel = loginViewModel)
+    }
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun DialogRememberPassword(loginViewModel: LoginViewModel, navigationController: NavHostController) {
+fun DialogRememberPassword(loginViewModel: LoginViewModel) {
     val forgottenEmail = loginViewModel.forgottenEmail.observeAsState("")
     var showResponse by rememberSaveable{mutableStateOf(false)}
 
-    Dialog(onDismissRequest = {navigationController.navigate(Routes.Login.route)}) {
+    Dialog(onDismissRequest = {loginViewModel.hideDialog()},
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)) {
         if(showResponse){
             Box(
                 Modifier
@@ -138,8 +143,9 @@ fun DialogRememberPassword(loginViewModel: LoginViewModel, navigationController:
                 )
             }
             loginViewModel.viewModelScope.launch {
-                delay(4000)
-                navigationController.popBackStack()
+                delay(2000)
+                loginViewModel.forgottenEmail.value = ""
+                loginViewModel.hideDialog()
             }
 
         }else{
@@ -185,10 +191,10 @@ fun PasswordField(password : String, onPassChange : (String) -> Unit) {
             .fillMaxWidth(),
         trailingIcon = {
             val image = if (passwordVisible)
-                R.drawable.show_password
-            else R.drawable.hide_password
+                R.drawable.password_visible
+            else R.drawable.password_off
             IconButton(onClick = {passwordVisible = !passwordVisible}){
-                Icon(painter = painterResource(id = R.drawable.ic_outline_visibility_24), "",
+                Icon(painter = painterResource(id =image), "",
                     Modifier
                         .height(20.dp)
                         .width(20.dp))
