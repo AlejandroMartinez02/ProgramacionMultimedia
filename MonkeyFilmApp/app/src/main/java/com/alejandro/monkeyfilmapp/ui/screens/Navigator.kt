@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.alejandro.monkeyfilmapp.MovieModel
 import com.alejandro.monkeyfilmapp.home.*
+import com.alejandro.monkeyfilmapp.home.addMovie.AddMovieView
 import com.alejandro.monkeyfilmapp.home.expandedMovie.ExpandedMovieView
 import com.alejandro.monkeyfilmapp.login.ui.*
 import com.alejandro.monkeyfilmapp.register.*
@@ -33,6 +34,9 @@ fun MonkeyNavigator(){
             arguments = listOf(navArgument("movieid") { type = NavType.IntType })
         ) {navBackStackEntry ->
             ExpandedMovieView(id = navBackStackEntry.arguments!!.getInt("movieid") - 1, homeModel = main, navigationControler = navigationController)
+        }
+        composable(route = Routes.AddMovie.route){
+            AddMovieView(modelView = main, navController = navigationController)
         }
     }
 }

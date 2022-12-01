@@ -4,8 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
@@ -32,8 +32,17 @@ fun ExpandedMovieView(id : Int, homeModel : HomeModelView, navigationControler :
         .background(azulFondo)
         .fillMaxSize()
         .padding(10.dp)){
-            Image(painter = painterResource(id = obtenerFoto(peli!![id].cartel)), contentDescription = peli!![id].title, modifier = Modifier.padding(10.dp).height(400.dp).align(Alignment.CenterHorizontally))
-        Row(modifier = Modifier.padding(start = 10.dp, top = 4.dp, bottom = 4.dp).align(Alignment.CenterHorizontally)){
+        IconButton(onClick = { navigationControler.popBackStack() }, modifier = Modifier.width(80.dp).background(
+            azulFondo)) {
+            Icon(painter = painterResource(com.alejandro.monkeyfilmapp.R.drawable.ic_baseline_arrow_back_24), contentDescription = "Back")
+        }
+            Image(painter = painterResource(id = obtenerFoto(peli!![id].cartel)), contentDescription = peli!![id].title, modifier = Modifier
+                .padding(10.dp)
+                .height(400.dp)
+                .align(Alignment.CenterHorizontally))
+        Row(modifier = Modifier
+            .padding(start = 10.dp, top = 4.dp, bottom = 4.dp)
+            .align(Alignment.CenterHorizontally)){
             Text(text = peli!![id].title, color = Color.White, fontSize = 24.sp, fontFamily = Calibri)
             Icon(
                 imageVector = Icons.Default.Star, contentDescription = "Puntuacion",
@@ -44,17 +53,23 @@ fun ExpandedMovieView(id : Int, homeModel : HomeModelView, navigationControler :
             )
             Text(text = peli!![id].score.toString(), fontSize = 16.sp, fontFamily = Calibri, color = Color.White,modifier = Modifier.padding(top = 5.dp))
         }
-        Text(text = getGenre(peli!![id]), color = Color.White, fontSize = 16.sp, fontFamily = Calibri, modifier = Modifier.padding(start = 10.dp, top = 4.dp, bottom = 4.dp).align(Alignment.CenterHorizontally))
+        Text(text = getGenre(peli!![id]), color = Color.White, fontSize = 16.sp, fontFamily = Calibri, modifier = Modifier
+            .padding(start = 10.dp, top = 4.dp, bottom = 4.dp)
+            .align(Alignment.CenterHorizontally))
 
         Text(text = peli!![id].description, color = Color.White, fontSize = 16.sp, fontFamily = Calibri, modifier = Modifier.padding(start = 10.dp, top = 4.dp, bottom = 4.dp), textAlign = TextAlign.Justify)
-        }
+
+
+
+    }
+
 
     }
 
 
 
 fun getGenre(pelicula: MovieModel) : String{
-    var genre = "|"
+    var genre = " | "
     for(i in 0 until pelicula.genre.size){
         genre += pelicula.genre[i] + " | "
     }

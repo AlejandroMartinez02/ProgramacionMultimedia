@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,7 +14,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -52,7 +56,6 @@ fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostContr
     BottomNavigation(
         backgroundColor = azulFondo,
         contentColor = Color.White,
-        modifier = Modifier.padding(top = 60.dp)
     ) {
         BottomNavigationItem(selected = !selected!!, onClick = {
             if(selected){
@@ -91,7 +94,10 @@ fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostContr
 fun MovieCards(viewModel: HomeModelView, navigationController: NavHostController) {
     val peliculas = viewModel.peliculas.observeAsState()
 
-    LazyColumn(modifier = Modifier.padding(bottom = 60.dp).background(azulClarito).fillMaxSize()) {
+    LazyColumn(modifier = Modifier
+        .padding(bottom = 50.dp)
+        .background(azulClarito)
+        .fillMaxSize()) {
         item {
             if(viewModel.showFavourites.value == true){
                 peliculas.value?.forEach { pelicula ->
@@ -168,7 +174,7 @@ fun MyCard(pelicula: MovieModel, navigationController: NavHostController) {
             Row() {
                 Image(
                     painterResource(obtenerFoto(pelicula.cartel)), contentDescription = "Cartel",
-                    Modifier
+                    modifier = Modifier
                         .height(200.dp)
                         .padding(10.dp))
                Column(verticalArrangement = Arrangement.Bottom, ) {
@@ -176,7 +182,9 @@ fun MyCard(pelicula: MovieModel, navigationController: NavHostController) {
                        text = pelicula.description,
                        overflow = TextOverflow.Ellipsis,
                        maxLines = 3,
-                       modifier = Modifier.padding(7.dp).align(Alignment.CenterHorizontally),
+                       modifier = Modifier
+                           .padding(7.dp)
+                           .align(Alignment.CenterHorizontally),
                        fontFamily = Calibri,
                        fontSize = 15.sp,
                        color = Color.White
@@ -219,9 +227,25 @@ fun MonkeyMainScaffold(
         topBar = { MonkeyTopBar() },
         scaffoldState = scaffoldState,
         bottomBar = { MonkeyBottomBar(modelView,navigationController) },
+        drawerContent = {MonkeyDrawer(modelView, navigationController)},
+        floatingActionButton = { MonkeyButton(navigationController) },
         content = { MovieCards(modelView, navigationController)}
     )
 }
+
+@Composable
+fun MonkeyButton(navigationController: NavHostController){
+    FloatingActionButton(onClick = {navigationController.navigate(Routes.AddMovie.route)}) {
+        Icon(painter = painterResource(id = R.drawable.expand_movie) , contentDescription = "Add movie")
+    }
+}
+
+@Composable
+fun MonkeyDrawer(modelView: HomeModelView, navigationController: NavHostController) {
+
+}
+
+
 
 fun obtenerFoto(id : Int) : Int{
     var imagen = R.drawable.ic_baseline_error_outline_24

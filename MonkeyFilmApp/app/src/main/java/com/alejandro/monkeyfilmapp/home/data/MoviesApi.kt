@@ -20,7 +20,6 @@ class MoviesApi {
              withContext(Dispatchers.Unconfined){
                  if(response.isSuccessful){
                     val items = response.body()
-
                      if(items != null){
                          for(i in 0 until items.arrayMovies.count()){
                              val id = items.arrayMovies[i].id
