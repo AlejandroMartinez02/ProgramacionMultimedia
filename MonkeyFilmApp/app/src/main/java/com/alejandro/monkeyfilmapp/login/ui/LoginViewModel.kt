@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.alejandro.monkeyfilmapp.login.domin.LoginUseCase
-import com.alejandro.monkeyfilmapp.ui.screens.Routes
+import com.alejandro.monkeyfilmapp.ui.navigation.Routes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

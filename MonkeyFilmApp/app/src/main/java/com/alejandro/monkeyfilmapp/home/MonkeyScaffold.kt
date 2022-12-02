@@ -1,11 +1,12 @@
-package com.alejandro.monkeyfilmapp.ui.screens
+package com.alejandro.monkeyfilmapp.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -14,24 +15,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.alejandro.monkeyfilmapp.MovieModel
 import com.alejandro.monkeyfilmapp.R
-import com.alejandro.monkeyfilmapp.home.HomeModelView
-import com.alejandro.monkeyfilmapp.ui.theme.Calibri
-import com.alejandro.monkeyfilmapp.ui.theme.azulCards
-import com.alejandro.monkeyfilmapp.ui.theme.azulClarito
-import com.alejandro.monkeyfilmapp.ui.theme.azulFondo
+import com.alejandro.monkeyfilmapp.ui.navigation.Routes
+import com.alejandro.monkeyfilmapp.ui.theme.*
 
 @Composable
 fun MonkeyTopBar(){
@@ -42,11 +37,6 @@ fun MonkeyTopBar(){
         backgroundColor = azulFondo,
         contentColor = Color.White,
         elevation = 123.dp,
-        navigationIcon = {
-            IconButton(onClick = { }) {
-                Icon(imageVector = Icons.Filled.List, contentDescription = "back")
-            }
-        }
     )
 }
 
@@ -59,8 +49,9 @@ fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostContr
     ) {
         BottomNavigationItem(selected = !selected!!, onClick = {
             if(selected){
-                modelView.changeFavourites(false)
                 navigationController.popBackStack()
+                modelView.changeFavourites(false)
+
             }else{
                refreshView(navigationController)
             }
@@ -93,14 +84,18 @@ fun MonkeyBottomBar(modelView: HomeModelView, navigationController: NavHostContr
 @Composable
 fun MovieCards(viewModel: HomeModelView, navigationController: NavHostController) {
     val peliculas = viewModel.peliculas.observeAsState()
-
-    LazyColumn(modifier = Modifier
-        .padding(bottom = 50.dp)
-        .background(azulClarito)
-        .fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier
+            .padding(bottom = 50.dp)
+            .background(
+                brush = Brush.horizontalGradient(
+                    listOf(azulCards2, azulCards1)
+                )
+            )
+            .fillMaxSize()) {
         item {
             if(viewModel.showFavourites.value == true){
-                peliculas.value?.forEach { pelicula ->
+                peliculas.value?.forEach{ pelicula ->
                     if(pelicula.favorite){
                         MyCard(pelicula, navigationController)
                     }
@@ -121,97 +116,95 @@ fun MyCard(pelicula: MovieModel, navigationController: NavHostController) {
 
     Card(modifier = Modifier
         .fillMaxWidth()
-        .height(70.dp)
-        .background(azulCards),
+        .height(200.dp)
+        .padding(bottom = 5.dp)
+        .background(
+            brush = Brush.horizontalGradient(
+                listOf(azulCards2, azulCards1)
+            )
+        ),
         onClick = {expandedState = !expandedState})
     {
-        Row(Modifier.background(azulCards)){
+        Row(Modifier.background(brush = Brush.horizontalGradient(
+            listOf(azulCards2, azulCards1)
+        ),
+        ), verticalAlignment = Alignment.CenterVertically){
             Image(
                  painter = painterResource(obtenerFoto(pelicula.cartel)),
                  contentDescription = "",
+                contentScale = ContentScale.FillHeight,
                  modifier = Modifier
-                     .size(60.dp),
+                     .height(170.dp)
+                     .padding(5.dp)
              )
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ){
-                Column(Modifier.padding(start = 10.dp, top = 7.dp)) {
-                    Text(pelicula.title, color = Color.White, fontFamily = Calibri)
-                    Row{
-                        Icon(
-                            imageVector = Icons.Default.Star, contentDescription = "Puntuacion",
-                            Modifier
-                                .size(20.dp)
-                                .padding(top = 1.dp),
-                            tint = Color.Yellow
-                        )
-                        Text(text = pelicula.score.toString(), fontSize = 12.sp, fontFamily = Calibri, color = Color.White,modifier = Modifier.padding(top = 3.dp))
+            if(expandedState){
+                Column(verticalArrangement = Arrangement.SpaceAround, ) {
+                    Text(
+                        text = pelicula.description,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 4,
+                        modifier = Modifier
+                            .padding(7.dp)
+                            .align(Alignment.CenterHorizontally),
+                        fontFamily = Calibri,
+                        fontSize = 15.sp,
+                        color = Color.White
+                    )
+                    Row(horizontalArrangement = Arrangement.SpaceAround,  modifier = Modifier.fillMaxWidth()){
+                        IconButton(onClick = {
+                            navigationController.navigate(Routes.ExpandMovie.createRoute(pelicula.id))
+                        }) {
+                            Icon(painter = painterResource(id = R.drawable.expand_movie), contentDescription = "Expand movie")
+                        }
+
+                        IconButton(onClick = {/*FUTURA FUNCION*/}) {
+                            Icon(painter = painterResource(id = R.drawable.modify_movie), contentDescription = "Modify Movie")
+                        }
+                        IconButton(
+                            onClick =
+                            {
+                                pelicula.favorite = !pelicula.favorite
+                                refreshView(navigationController)
+                            }
+                        ) {
+                            val image = if(pelicula.favorite){
+                                R.drawable.favourite
+                            }else
+                                R.drawable.no_favourite
+                            Image(painter = painterResource(id = image), contentDescription = "Fav",)
+                        }
                     }
                 }
-                IconButton(
-                    onClick =
-                    {
-                        pelicula.favorite = !pelicula.favorite
-                        refreshView(navigationController)
-                    },
-                    modifier = Modifier.padding(top = 7.dp)
-                ) {
-                    val image = if(pelicula.favorite){
-                        R.drawable.favourite
-                    }else
-                        R.drawable.no_favourite
-                    Image(painter = painterResource(id = image), contentDescription = "Fav")
+            }else{
+
+            Column(
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ){
+
+                Text(pelicula.title, color = Color.White, fontFamily = Calibri, fontSize = 22.sp, modifier= Modifier.padding(start = 4.dp))
+                Row{
+                    Icon(
+                        imageVector = Icons.Default.Star, contentDescription = "Puntuacion",
+                        Modifier
+                            .size(30.dp)
+                            .padding(top = 1.dp),
+                        tint = Color.Yellow
+                    )
+                    Text(text = pelicula.score.toString(), fontSize = 17.sp, fontFamily = Calibri, color = Color.White,modifier = Modifier.padding(top = 6.dp))
                 }
             }
+        }
         }
 
     }
-    if(expandedState){
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .background(azulClarito)){
-            Row() {
-                Image(
-                    painterResource(obtenerFoto(pelicula.cartel)), contentDescription = "Cartel",
-                    modifier = Modifier
-                        .height(200.dp)
-                        .padding(10.dp))
-               Column(verticalArrangement = Arrangement.Bottom, ) {
-                   Text(
-                       text = pelicula.description,
-                       overflow = TextOverflow.Ellipsis,
-                       maxLines = 3,
-                       modifier = Modifier
-                           .padding(7.dp)
-                           .align(Alignment.CenterHorizontally),
-                       fontFamily = Calibri,
-                       fontSize = 15.sp,
-                       color = Color.White
-                   )
-                   Row(horizontalArrangement = Arrangement.SpaceAround,  modifier = Modifier.fillMaxWidth()){
-                       IconButton(onClick = {
-                           navigationController.navigate(Routes.ExpandMovie.createRoute(pelicula.id) )
-                       }) {
-                           Icon(painter = painterResource(id = R.drawable.expand_movie), contentDescription = "Expand movie")
-                       }
-
-                       IconButton(onClick = {/*FUTURA FUNCION*/}) {
-                            Icon(painter = painterResource(id = R.drawable.modify_movie), contentDescription = "Modify Movie")
-                       }
-                   }
-               }
-
-            }
-        }
-        }
 
 }
 
 fun refreshView(navigationController: NavHostController) {
     val idView = navigationController.currentDestination?.id
-    navigationController.popBackStack(idView!!, inclusive = true)
-    navigationController.navigate(idView)
+    navigationController.navigate(idView!!)
+    navigationController.popBackStack(idView, inclusive = true)
+
 }
 
 
@@ -227,9 +220,9 @@ fun MonkeyMainScaffold(
         topBar = { MonkeyTopBar() },
         scaffoldState = scaffoldState,
         bottomBar = { MonkeyBottomBar(modelView,navigationController) },
-        drawerContent = {MonkeyDrawer(modelView, navigationController)},
+        drawerContent = { MonkeyDrawer(modelView, navigationController) },
         floatingActionButton = { MonkeyButton(navigationController) },
-        content = { MovieCards(modelView, navigationController)}
+        content = { MovieCards(modelView, navigationController) }
     )
 }
 
@@ -260,6 +253,7 @@ fun obtenerFoto(id : Int) : Int{
         8-> imagen = R.drawable.c8
         9-> imagen = R.drawable.c9
         10-> imagen = R.drawable.c10
+        0 -> imagen = R.drawable.ic_launcher_background
     }
     return imagen
 }
@@ -272,3 +266,6 @@ fun ordenar(lista : ArrayList<MovieModel>){
     Log.d("", newArray.toString())
 }
 */
+/*
+
+ */

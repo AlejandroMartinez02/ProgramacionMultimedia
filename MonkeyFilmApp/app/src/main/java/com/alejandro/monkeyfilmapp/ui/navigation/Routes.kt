@@ -1,6 +1,4 @@
-package com.alejandro.monkeyfilmapp.ui.screens
-
-import com.alejandro.monkeyfilmapp.MovieModel
+package com.alejandro.monkeyfilmapp.ui.navigation
 
 sealed class Routes(val route : String){
     object Login : Routes("LOGIN")

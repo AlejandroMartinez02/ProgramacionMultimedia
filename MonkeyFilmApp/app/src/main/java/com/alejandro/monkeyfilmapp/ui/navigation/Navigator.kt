@@ -1,4 +1,4 @@
-package com.alejandro.monkeyfilmapp.ui.screens
+package com.alejandro.monkeyfilmapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
@@ -6,7 +6,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.alejandro.monkeyfilmapp.MovieModel
 import com.alejandro.monkeyfilmapp.home.*
 import com.alejandro.monkeyfilmapp.home.addMovie.AddMovieView
 import com.alejandro.monkeyfilmapp.home.expandedMovie.ExpandedMovieView

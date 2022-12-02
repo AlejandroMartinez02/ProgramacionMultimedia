@@ -27,7 +27,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.alejandro.monkeyfilmapp.R
-import com.alejandro.monkeyfilmapp.ui.screens.Routes
+import com.alejandro.monkeyfilmapp.ui.navigation.Routes
 import com.alejandro.monkeyfilmapp.ui.theme.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

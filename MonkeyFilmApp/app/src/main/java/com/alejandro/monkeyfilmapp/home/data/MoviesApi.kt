@@ -17,7 +17,7 @@ class MoviesApi {
          CoroutineScope(Dispatchers.IO).launch {
              val response = service.getMovies()
 
-             withContext(Dispatchers.Unconfined){
+             withContext(Dispatchers.IO){
                  if(response.isSuccessful){
                     val items = response.body()
                      if(items != null){

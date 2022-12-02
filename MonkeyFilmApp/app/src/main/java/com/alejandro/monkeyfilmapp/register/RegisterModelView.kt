@@ -1,13 +1,10 @@
 package com.alejandro.monkeyfilmapp.register
 
-import android.util.Patterns
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.alejandro.monkeyfilmapp.login.ui.LoginViewModel
-import com.alejandro.monkeyfilmapp.ui.screens.Routes
+import com.alejandro.monkeyfilmapp.ui.navigation.Routes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
