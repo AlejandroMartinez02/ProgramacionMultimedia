@@ -22,6 +22,9 @@ data class MovieModel(
     @SerializedName("favourite")
     var favorite: Boolean = false,
 
+    @SerializedName("category")
+    var category : String,
+
     @SerializedName("genre")
     var genre: List<String>
 )

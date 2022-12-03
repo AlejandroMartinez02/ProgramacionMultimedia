@@ -3,19 +3,20 @@ package com.alejandro.monkeyfilmapp.home
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.alejandro.monkeyfilmapp.MovieModel
-import com.alejandro.monkeyfilmapp.home.data.MoviesApi
+import com.alejandro.monkeyfilmapp.home.data.MovieRepository
+import com.alejandro.monkeyfilmapp.home.data.domain.HomeUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 open class HomeModelView : ViewModel() {
+    private val movies = HomeUseCase()
+
     private val _peliculas = MutableLiveData<MutableList<MovieModel>>()
     val peliculas = _peliculas
     init {
-        val api = MoviesApi()
         CoroutineScope(Dispatchers.Main).launch {
-            api.obtainMovies()
-            _peliculas.value = api.itemsArray
+            _peliculas.value = movies()
         }
     }
 
@@ -47,12 +48,13 @@ open class HomeModelView : ViewModel() {
     fun addMovie(){
         _peliculas.value?.add(
             MovieModel(
-                _peliculas.value!!.last().id,
+                _peliculas.value!!.last().id + 1,
                 _titleMovie.value.toString(),
                 _description.value.toString(),
                 0,
                 50,
                 false,
+                "Pelicula",
                 setGenreList()
             )
         )

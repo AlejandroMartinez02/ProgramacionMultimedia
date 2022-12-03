@@ -1,8 +1,10 @@
 package com.alejandro.monkeyfilmapp.home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,7 +31,9 @@ import com.alejandro.monkeyfilmapp.ui.navigation.Routes
 import com.alejandro.monkeyfilmapp.ui.theme.*
 
 @Composable
-fun MonkeyTopBar(){
+fun MonkeyTopBar(homeModelView: HomeModelView, navigationController: NavHostController){
+    var drawer by rememberSaveable { mutableStateOf(false) }
+
     TopAppBar(
         title = {
             Text(text = " Peliculas")
@@ -37,7 +41,12 @@ fun MonkeyTopBar(){
         backgroundColor = azulFondo,
         contentColor = Color.White,
         elevation = 123.dp,
+        navigationIcon = { Icon(imageVector = Icons.Default.Menu, contentDescription = "Filtros", modifier= Modifier.clickable { drawer = !drawer })
+        }
     )
+    if(drawer){
+        MonkeyDrawer(homeModelView, navigationController)
+    }
 }
 
 @Composable
@@ -101,6 +110,7 @@ fun MovieCards(viewModel: HomeModelView, navigationController: NavHostController
                     }
                 }
             }else{
+                Log.d("ddfg", "${peliculas.value?.size}")
                 peliculas.value?.forEach{pelicula ->
                     MyCard(pelicula, navigationController)
                 }
@@ -217,7 +227,7 @@ fun MonkeyMainScaffold(
 
     val scaffoldState = rememberScaffoldState()
     Scaffold(
-        topBar = { MonkeyTopBar() },
+        topBar = { MonkeyTopBar(modelView,navigationController)},
         scaffoldState = scaffoldState,
         bottomBar = { MonkeyBottomBar(modelView,navigationController) },
         drawerContent = { MonkeyDrawer(modelView, navigationController) },
@@ -228,7 +238,7 @@ fun MonkeyMainScaffold(
 
 @Composable
 fun MonkeyButton(navigationController: NavHostController){
-    FloatingActionButton(onClick = {navigationController.navigate(Routes.AddMovie.route)}) {
+    FloatingActionButton(onClick = {navigationController.navigate(Routes.AddMovie.route)}, backgroundColor = Color.White) {
         Icon(painter = painterResource(id = R.drawable.expand_movie) , contentDescription = "Add movie")
     }
 }

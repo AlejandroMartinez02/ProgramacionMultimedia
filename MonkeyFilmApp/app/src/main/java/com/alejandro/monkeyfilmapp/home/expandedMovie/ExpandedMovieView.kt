@@ -30,7 +30,7 @@ fun ExpandedMovieView(id : Int, homeModel : HomeModelView, navigationControler :
     val peli by homeModel.peliculas.observeAsState()
     Column(modifier = Modifier
         .background(brush = Brush.verticalGradient(
-            listOf(azulFondo, azulClarito)
+            listOf(azulFondo, azulClarito, azulCards2)
         ))
         .fillMaxSize()
         .padding(10.dp)){
