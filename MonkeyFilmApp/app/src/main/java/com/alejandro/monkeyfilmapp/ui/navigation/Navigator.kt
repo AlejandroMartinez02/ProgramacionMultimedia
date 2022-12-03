@@ -6,9 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.alejandro.monkeyfilmapp.home.*
 import com.alejandro.monkeyfilmapp.home.addMovie.AddMovieView
 import com.alejandro.monkeyfilmapp.home.expandedMovie.ExpandedMovieView
+import com.alejandro.monkeyfilmapp.home.ui.HomeModelView
+import com.alejandro.monkeyfilmapp.home.ui.HomeScreen
 import com.alejandro.monkeyfilmapp.login.ui.*
 import com.alejandro.monkeyfilmapp.register.*
 
@@ -18,7 +19,7 @@ fun MonkeyNavigator(){
     val register = RegisterModelView()
     val login = LoginViewModel()
     val main = HomeModelView()
-    NavHost(navController = navigationController, startDestination = Routes.Home.route) {
+    NavHost(navController = navigationController, startDestination = Routes.Login.route) {
         composable(route = Routes.Login.route) {
             LoginScreen(login,navigationController)
         }

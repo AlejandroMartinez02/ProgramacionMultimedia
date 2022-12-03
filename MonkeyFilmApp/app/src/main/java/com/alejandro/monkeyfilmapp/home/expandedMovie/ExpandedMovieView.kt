@@ -20,10 +20,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.alejandro.monkeyfilmapp.MovieModel
-import com.alejandro.monkeyfilmapp.home.HomeModelView
-import com.alejandro.monkeyfilmapp.home.obtenerFoto
+import com.alejandro.monkeyfilmapp.home.data.MovieModel
+import com.alejandro.monkeyfilmapp.home.ui.HomeModelView
+import com.alejandro.monkeyfilmapp.home.ui.obtenerFoto
 import com.alejandro.monkeyfilmapp.ui.theme.*
+import com.alejandro.monkeyfilmapp.R
 
 @Composable
 fun ExpandedMovieView(id : Int, homeModel : HomeModelView, navigationControler : NavHostController){
@@ -35,7 +36,7 @@ fun ExpandedMovieView(id : Int, homeModel : HomeModelView, navigationControler :
         .fillMaxSize()
         .padding(10.dp)){
         IconButton(onClick = { navigationControler.popBackStack() }, modifier = Modifier.width(80.dp)) {
-            Icon(painter = painterResource(com.alejandro.monkeyfilmapp.R.drawable.ic_baseline_arrow_back_24), contentDescription = "Back")
+            Icon(painter = painterResource(R.drawable.ic_baseline_arrow_back_24), contentDescription = "Back", tint = Color.White)
         }
             Image(painter = painterResource(id = obtenerFoto(peli!![id].cartel)), contentDescription = peli!![id].title, modifier = Modifier
                 .padding(10.dp)

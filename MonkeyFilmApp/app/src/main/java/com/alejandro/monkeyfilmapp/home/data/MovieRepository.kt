@@ -1,7 +1,5 @@
 package com.alejandro.monkeyfilmapp.home.data
 
-import com.alejandro.monkeyfilmapp.MovieModel
-import com.alejandro.monkeyfilmapp.core.network.RetrofitHelper
 import com.alejandro.monkeyfilmapp.home.data.network.MovieService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

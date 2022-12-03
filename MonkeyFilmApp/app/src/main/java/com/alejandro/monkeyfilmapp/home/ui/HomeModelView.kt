@@ -1,10 +1,9 @@
-package com.alejandro.monkeyfilmapp.home
+package com.alejandro.monkeyfilmapp.home.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.alejandro.monkeyfilmapp.MovieModel
-import com.alejandro.monkeyfilmapp.home.data.MovieRepository
-import com.alejandro.monkeyfilmapp.home.data.domain.HomeUseCase
+import com.alejandro.monkeyfilmapp.home.data.MovieModel
+import com.alejandro.monkeyfilmapp.home.domin.HomeUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

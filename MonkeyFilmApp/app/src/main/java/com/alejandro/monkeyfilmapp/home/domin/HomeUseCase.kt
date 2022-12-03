@@ -1,6 +1,6 @@
-package com.alejandro.monkeyfilmapp.home.data.domain
+package com.alejandro.monkeyfilmapp.home.domin
 
-import com.alejandro.monkeyfilmapp.MovieModel
+import com.alejandro.monkeyfilmapp.home.data.MovieModel
 import com.alejandro.monkeyfilmapp.home.data.MovieRepository
 
 class HomeUseCase {

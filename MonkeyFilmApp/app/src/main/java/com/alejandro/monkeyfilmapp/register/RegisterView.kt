@@ -102,30 +102,48 @@ fun CheckBoxes(registerModelView: RegisterModelView) {
     Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()){
         Column{
             Row{
-                Checkbox(checked = accion, onCheckedChange = {registerModelView.changeAccion(!accion)})
-                Text("Accion", Modifier.padding(top=15.dp))
+                Checkbox(checked = accion, onCheckedChange = {registerModelView.changeAccion(!accion)}, colors = CheckboxDefaults.colors(
+                    checkedColor = Color.White,
+                    checkmarkColor = azulFondo,
+                ))
+                Text("Accion", Modifier.padding(top=15.dp), color = Color.White)
             }
             Row{
-                Checkbox(checked = crimen, onCheckedChange = {registerModelView.changeCrimen(!crimen)})
-                Text("Crimen", Modifier.padding(top=15.dp))
+                Checkbox(checked = crimen, onCheckedChange = {registerModelView.changeCrimen(!crimen)}, colors = CheckboxDefaults.colors(
+                    checkedColor = Color.White,
+                    checkmarkColor = azulFondo,
+                ))
+                Text("Crimen", Modifier.padding(top=15.dp), color = Color.White)
             }
             Row{
-                Checkbox(checked = drama, onCheckedChange = {registerModelView.changeDrama(!drama)})
-                Text("Drama", Modifier.padding(top=15.dp))
+                Checkbox(checked = drama, onCheckedChange = {registerModelView.changeDrama(!drama)}, colors = CheckboxDefaults.colors(
+                    checkedColor = Color.White,
+                    checkmarkColor = azulFondo,
+                ))
+                Text("Drama", Modifier.padding(top=15.dp), color = Color.White)
             }
         }
         Column{
             Row{
-                Checkbox(checked = aventura, onCheckedChange = {registerModelView.changeAventura(!aventura)})
-                Text("Aventura", Modifier.padding(top=15.dp))
+                Checkbox(checked = aventura, onCheckedChange = {registerModelView.changeAventura(!aventura)}, colors = CheckboxDefaults.colors(
+                    checkedColor = Color.White,
+                    checkmarkColor = azulFondo,
+                ))
+                Text("Aventura", Modifier.padding(top=15.dp), color = Color.White)
             }
             Row{
-                Checkbox(checked =fantasia, onCheckedChange = {registerModelView.changeFantasia(!fantasia)})
-                Text("Fantasia", Modifier.padding(top=15.dp))
+                Checkbox(checked =fantasia, onCheckedChange = {registerModelView.changeFantasia(!fantasia)}, colors = CheckboxDefaults.colors(
+                    checkedColor = Color.White,
+                    checkmarkColor = azulFondo,
+                ))
+                Text("Fantasia", Modifier.padding(top=15.dp), color = Color.White)
             }
             Row{
-                Checkbox(checked = sifi, onCheckedChange =  {registerModelView.changeSifi(!sifi)})
-                Text("Si-Fi", Modifier.padding(top=15.dp))
+                Checkbox(checked = sifi, onCheckedChange =  {registerModelView.changeSifi(!sifi)}, colors = CheckboxDefaults.colors(
+                    checkedColor = Color.White,
+                    checkmarkColor = azulFondo,
+                ))
+                Text("Si-Fi", Modifier.padding(top=15.dp), color = Color.White)
             }
         }
     }

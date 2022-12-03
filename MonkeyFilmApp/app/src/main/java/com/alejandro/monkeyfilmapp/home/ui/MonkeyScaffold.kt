@@ -1,14 +1,11 @@
-package com.alejandro.monkeyfilmapp.home
+package com.alejandro.monkeyfilmapp.home.ui
 
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -25,28 +22,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.alejandro.monkeyfilmapp.MovieModel
+import com.alejandro.monkeyfilmapp.home.data.MovieModel
 import com.alejandro.monkeyfilmapp.R
 import com.alejandro.monkeyfilmapp.ui.navigation.Routes
 import com.alejandro.monkeyfilmapp.ui.theme.*
 
 @Composable
-fun MonkeyTopBar(homeModelView: HomeModelView, navigationController: NavHostController){
-    var drawer by rememberSaveable { mutableStateOf(false) }
-
+fun MonkeyTopBar(){
     TopAppBar(
         title = {
             Text(text = " Peliculas")
         },
         backgroundColor = azulFondo,
         contentColor = Color.White,
-        elevation = 123.dp,
-        navigationIcon = { Icon(imageVector = Icons.Default.Menu, contentDescription = "Filtros", modifier= Modifier.clickable { drawer = !drawer })
-        }
+        elevation = 123.dp
     )
-    if(drawer){
-        MonkeyDrawer(homeModelView, navigationController)
-    }
 }
 
 @Composable
@@ -164,11 +154,11 @@ fun MyCard(pelicula: MovieModel, navigationController: NavHostController) {
                         IconButton(onClick = {
                             navigationController.navigate(Routes.ExpandMovie.createRoute(pelicula.id))
                         }) {
-                            Icon(painter = painterResource(id = R.drawable.expand_movie), contentDescription = "Expand movie")
+                            Icon(painter = painterResource(id = R.drawable.expand_movie), contentDescription = "Expand movie", tint = Color.White)
                         }
 
                         IconButton(onClick = {/*FUTURA FUNCION*/}) {
-                            Icon(painter = painterResource(id = R.drawable.modify_movie), contentDescription = "Modify Movie")
+                            Icon(painter = painterResource(id = R.drawable.modify_movie), contentDescription = "Modify Movie", tint = Color.White)
                         }
                         IconButton(
                             onClick =
@@ -181,7 +171,7 @@ fun MyCard(pelicula: MovieModel, navigationController: NavHostController) {
                                 R.drawable.favourite
                             }else
                                 R.drawable.no_favourite
-                            Image(painter = painterResource(id = image), contentDescription = "Fav",)
+                            Icon(painter = painterResource(id = image), contentDescription = "Fav", tint = Color.White)
                         }
                     }
                 }
@@ -227,10 +217,9 @@ fun MonkeyMainScaffold(
 
     val scaffoldState = rememberScaffoldState()
     Scaffold(
-        topBar = { MonkeyTopBar(modelView,navigationController)},
+        topBar = { MonkeyTopBar() },
         scaffoldState = scaffoldState,
         bottomBar = { MonkeyBottomBar(modelView,navigationController) },
-        drawerContent = { MonkeyDrawer(modelView, navigationController) },
         floatingActionButton = { MonkeyButton(navigationController) },
         content = { MovieCards(modelView, navigationController) }
     )
@@ -239,16 +228,9 @@ fun MonkeyMainScaffold(
 @Composable
 fun MonkeyButton(navigationController: NavHostController){
     FloatingActionButton(onClick = {navigationController.navigate(Routes.AddMovie.route)}, backgroundColor = Color.White) {
-        Icon(painter = painterResource(id = R.drawable.expand_movie) , contentDescription = "Add movie")
+        Icon(painter = painterResource(id = R.drawable.expand_movie) , contentDescription = "Add movie", tint = azulFondo)
     }
 }
-
-@Composable
-fun MonkeyDrawer(modelView: HomeModelView, navigationController: NavHostController) {
-
-}
-
-
 
 fun obtenerFoto(id : Int) : Int{
     var imagen = R.drawable.ic_baseline_error_outline_24
@@ -268,6 +250,7 @@ fun obtenerFoto(id : Int) : Int{
     return imagen
 }
 
+
 /*
 ORDENAR POR PARAMETRO
 fun ordenar(lista : ArrayList<MovieModel>){
@@ -276,6 +259,3 @@ fun ordenar(lista : ArrayList<MovieModel>){
     Log.d("", newArray.toString())
 }
 */
-/*
-
- */

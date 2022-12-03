@@ -1,4 +1,4 @@
-package com.alejandro.monkeyfilmapp
+package com.alejandro.monkeyfilmapp.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

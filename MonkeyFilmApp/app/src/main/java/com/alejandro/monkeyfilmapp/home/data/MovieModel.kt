@@ -1,4 +1,4 @@
-package com.alejandro.monkeyfilmapp
+package com.alejandro.monkeyfilmapp.home.data
 
 import androidx.annotation.DrawableRes
 import com.google.gson.annotations.SerializedName

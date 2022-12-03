@@ -1,4 +1,4 @@
-package com.alejandro.monkeyfilmapp.home
+package com.alejandro.monkeyfilmapp.home.ui
 
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
